@@ -1,0 +1,98 @@
+{
+  "model": "MultiStageRanking",
+  "model_path": "model/prior_ranking",
+  "log_path": "model/prior_ranking",
+  "experiment_name": "PriorRanking",
+  "cuda": true,
+  "random_seed": 12345,
+  "unk": {
+    "unk_learning": "none"
+  },
+  "eval": {
+    "use_best_model": true
+  },
+  "infer": {
+    "word_sample_modes": [
+        {
+          "mode_name": "beam_10",
+          "decoder_mode": "beam_top_k",
+          "beam_width": 1,
+          "mask_unk_token": true,
+          "min_len": 4
+      }
+      ]
+  },
+  "training": {
+    "init": "xavier",
+    "learning_rate": 0.00001,
+    "start_to_adjust_lr": 1,
+    "lr_decay_rate": 0.5,
+    "init_learning_rate": 0,
+    "epochs": 20,
+    "grad_clip": 5.0,
+    "report_step_intervals": 200,
+    "early_stop": "general",
+    "loss_terms": {
+      "contrastive_loss": {
+      }
+    }
+  },
+  "pretrained_lm_configs": {
+    "query": {
+      "version" : "2.2.2",
+      "model_name":"hfl/chinese-bert-wwm-ext",
+            "tokenize": "none"
+    }
+  },
+  "learning2rank": {
+    "pretrained_encode_mode": true,
+    "sample_num_in_batch": 32,
+    "separate_encoder": false,
+    "output_dim": 768,
+    "mid_representation": false,
+    "margin": 0.3,
+    "padding_len非常关键，不然会失效": true,
+    "padding_len": 110,
+    "query_encoder": {
+      "sequential_encoder_type": "pretrained_encoder_adapter",
+      "adapter_network" : {
+        "output_size": 768
+      }
+    },
+    "pretrained_lm_configs": {
+      "query": {
+        "version" : "2.2.2",
+        "model_name":"hfl/chinese-bert-wwm-ext",
+              "tokenize": "none",
+        "fixed_param": false
+      }
+  }
+  },
+  "dataset": {
+    "batch_size": 96,
+    "mid_representation": false,
+    "full_pretrained_vocab": true,
+    "pair_wise_input_mode": true,
+    "share_src_tgt_vocab": true,
+    "copy_order": [],
+    "cuda": true,
+    "max_line": -1,
+    "max_src_len": 105,
+    "max_tgt_len": 105,
+    "query_suffix" :  "rank_candidates",
+    "response_suffix" :  "rank_tgt",
+    "result_suffix": "/test",
+    "bulks": [0,120],
+    "test_data_path_prefix": "datasets/weibo/ccm_contrastive/infer/train_rank",
+    "sp_token_vocab_path": "datasets/weibo/bert_ccm_gdfirst/sp_tokens.txt",
+    "tgt_vocab_path": "datasets/weibo/vocab30K.txt",
+    "src_vocab_path": "datasets/weibo/vocab30K.txt",
+    "val_data_path_prefix": "datasets/weibo/ccm_contrastive/infer/demo_rank",
+    "training_data_path_prefix": "datasets/weibo/ccm_contrastive/infer/demo_rank"
+  },
+  "embedding": {
+    "valid_init_flags": [],
+    "embed_size": 20
+  }
+
+}
